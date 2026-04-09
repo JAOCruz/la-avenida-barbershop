@@ -731,6 +731,47 @@
       text-decoration: none;
     }
 
+    /* ============ LANGUAGE TOGGLE ============ */
+    #lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid rgba(245,240,232,0.2);
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      background: transparent;
+      border: none;
+      color: rgba(245,240,232,0.4);
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+    .lang-btn.active {
+      background: #b8952a;
+      color: #0a0a0a;
+    }
+    .lang-btn:hover:not(.active) {
+      color: #f5f0e8;
+    }
+    .lang-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(245,240,232,0.15);
+    }
+    /* Smooth transition for translated text */
+    [data-es], [data-en] {
+      transition: opacity 0.2s ease;
+    }
+    .lang-fade {
+      opacity: 0 !important;
+    }
+
     /* ============ NAV ============ */
     nav {
       position: fixed;
@@ -839,11 +880,18 @@
   <nav id="navbar">
     <a href="#hero" class="nav-logo">La <span>Avenida</span></a>
     <ul class="nav-links">
-      <li><a href="#heritage">Heritage</a></li>
-      <li><a href="#services">Services</a></li>
-      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#heritage" data-es="Legado" data-en="Heritage">Heritage</a></li>
+      <li><a href="#services" data-es="Servicios" data-en="Services">Services</a></li>
+      <li><a href="#gallery" data-es="Galería" data-en="Gallery">Gallery</a></li>
     </ul>
-    <a href="#booking" class="nav-book">Book Now</a>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div id="lang-toggle" role="group" aria-label="Language toggle">
+        <button class="lang-btn" id="btn-es" onclick="setLanguage('es')">ES</button>
+        <div class="lang-divider"></div>
+        <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
+      </div>
+      <a href="#booking" class="nav-book" data-es="Reservar" data-en="Book Now">Book Now</a>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -852,14 +900,14 @@
     <div id="hero-content">
       <p class="hero-est">Est. — 1909 — Santo Domingo</p>
       <h1 class="hero-name">La<br><span>Avenida</span></h1>
-      <p class="hero-tagline">We've been shaping confidence since 1909</p>
+      <p class="hero-tagline" data-es="Moldeando Confianza Desde 1909" data-en="We've been shaping confidence since 1909">We've been shaping confidence since 1909</p>
       <div class="hero-cta">
-        <a href="#booking" class="btn-primary">Reserve Your Chair</a>
-        <a href="#heritage" class="btn-ghost">Our Story</a>
+        <a href="#booking" class="btn-primary" data-es="Reservar Tu Silla" data-en="Reserve Your Chair">Reserve Your Chair</a>
+        <a href="#heritage" class="btn-ghost" data-es="Nuestra Historia" data-en="Our Story">Our Story</a>
       </div>
     </div>
     <div class="hero-scroll">
-      <span>Scroll</span>
+      <span data-es="Bajar" data-en="Scroll">Scroll</span>
       <div class="scroll-line"></div>
     </div>
   </section>
@@ -881,15 +929,15 @@
         </div>
       </div>
       <div class="heritage-text">
-        <p class="section-label reveal-ready">Our Heritage</p>
+        <p class="section-label reveal-ready" data-es="Nuestro Legado" data-en="Our Heritage">Our Heritage</p>
         <div class="gold-line reveal-ready"></div>
-        <h2 class="section-heading reveal-ready">More Than<br>A Cut.<br>A Legacy.</h2>
-        <p class="section-body reveal-ready" style="margin-top: 32px;">
+        <h2 class="section-heading reveal-ready" data-es="Más Que<br>Un Corte.<br>Un Legado." data-en="More Than<br>A Cut.<br>A Legacy.">More Than<br>A Cut.<br>A Legacy.</h2>
+        <p class="section-body reveal-ready" style="margin-top: 32px;" data-es="En 1909, en una tranquila esquina de La Avenida en Santo Domingo, un barbero abrió sus puertas con una sola creencia: un buen corte cambia cómo un hombre se lleva a sí mismo. Más de un siglo después, esa creencia sigue siendo la base de cada servicio que ofrecemos." data-en="In 1909, on a quiet stretch of La Avenida in Santo Domingo, a barber opened his doors with a single belief: a great cut changes how a man carries himself. Over a century later, that belief is still the foundation of every service we offer.">
           In 1909, on a quiet stretch of La Avenida in Santo Domingo, a barber opened his doors
           with a single belief: a great cut changes how a man carries himself. Over a century later,
           that belief is still the foundation of every service we offer.
         </p>
-        <p class="section-body reveal-ready" style="margin-top: 20px;">
+        <p class="section-body reveal-ready" style="margin-top: 20px;" data-es="Tres generaciones. Un solo estándar. El oficio se transmite, no se subcontrata. Cada barbero que trabaja aquí se formó bajo alguien que se formó bajo alguien que conoció a nuestro fundador por su nombre." data-en="Three generations. One standard. The craft is handed down, not outsourced. Every barber who works here trained under someone who trained under someone who knew our founder by name.">
           Three generations. One standard. The craft is handed down, not outsourced.
           Every barber who works here trained under someone who trained under someone who
           knew our founder by name.
@@ -897,19 +945,19 @@
         <div class="heritage-stats reveal-ready">
           <div class="stat-item">
             <div class="stat-num">115</div>
-            <div class="stat-label">Years of Service</div>
+            <div class="stat-label" data-es="Años de Servicio" data-en="Years of Service">Years of Service</div>
           </div>
           <div class="stat-item">
             <div class="stat-num">3</div>
-            <div class="stat-label">Generations</div>
+            <div class="stat-label" data-es="Generaciones" data-en="Generations">Generations</div>
           </div>
           <div class="stat-item">
             <div class="stat-num">40+</div>
-            <div class="stat-label">Master Barbers</div>
+            <div class="stat-label" data-es="Maestros Barberos" data-en="Master Barbers">Master Barbers</div>
           </div>
           <div class="stat-item">
             <div class="stat-num">1</div>
-            <div class="stat-label">Standard</div>
+            <div class="stat-label" data-es="Estándar" data-en="Standard">Standard</div>
           </div>
         </div>
       </div>
@@ -918,8 +966,8 @@
 
   <!-- MISSION / QUOTE -->
   <section id="mission">
-    <p class="section-label" style="color: rgba(10,10,10,0.4);">The Philosophy</p>
-    <blockquote class="mission-quote reveal-ready">
+    <p class="section-label" style="color: rgba(10,10,10,0.4);" data-es="La Filosofía" data-en="The Philosophy">The Philosophy</p>
+    <blockquote class="mission-quote reveal-ready" data-es='"La silla es donde un hombre se sienta siendo él mismo — y se levanta siendo quien quiere ser."' data-en='"The chair is where a man sits down as himself — and stands up as who he wants to be."'>
       "The chair is where a man sits down as himself — and stands up as who he wants to be."
     </blockquote>
     <p class="mission-attr reveal-ready">— La Avenida Barbershop, Est. 1909</p>
@@ -933,19 +981,19 @@
         <div class="philosophy-content">
           <div class="philosophy-panels" id="philosophy-panels">
             <div class="philosophy-panel active" id="panel-0">
-              <p class="philosophy-num">01 — Craft</p>
-              <h3>The Art of<br>the Blade</h3>
-              <p>Every cut begins with silence. An assessment. A commitment. We don't rush the process — the process is the point. Master barbers who understand structure, proportion, and the difference between a good cut and a defining one.</p>
+              <p class="philosophy-num" data-es="01 — Oficio" data-en="01 — Craft">01 — Craft</p>
+              <h3 data-es="El Arte de<br>la Navaja" data-en="The Art of<br>the Blade">The Art of<br>the Blade</h3>
+              <p data-es="Cada corte comienza en silencio. Una evaluación. Un compromiso. No apresuramos el proceso — el proceso es el punto. Maestros barberos que entienden la estructura, la proporción, y la diferencia entre un buen corte y uno que define." data-en="Every cut begins with silence. An assessment. A commitment. We don't rush the process — the process is the point. Master barbers who understand structure, proportion, and the difference between a good cut and a defining one.">Every cut begins with silence. An assessment. A commitment. We don't rush the process — the process is the point. Master barbers who understand structure, proportion, and the difference between a good cut and a defining one.</p>
             </div>
             <div class="philosophy-panel" id="panel-1">
-              <p class="philosophy-num">02 — Tradition</p>
-              <h3>Passed Down,<br>Not Copied</h3>
-              <p>Technique isn't learned from a video. It lives in the hands of those who've practiced for decades. We carry traditions that predate trends — hot towel shaves, edge work, scalp care — rituals that never go out of style.</p>
+              <p class="philosophy-num" data-es="02 — Tradición" data-en="02 — Tradition">02 — Tradition</p>
+              <h3 data-es="Transmitido,<br>No Copiado" data-en="Passed Down,<br>Not Copied">Passed Down,<br>Not Copied</h3>
+              <p data-es="La técnica no se aprende de un video. Vive en las manos de quienes llevan décadas practicando. Llevamos tradiciones que preceden a las tendencias — afeitados con toalla caliente, definición de bordes, cuidado del cuero cabelludo — rituales que nunca pasan de moda." data-en="Technique isn't learned from a video. It lives in the hands of those who've practiced for decades. We carry traditions that predate trends — hot towel shaves, edge work, scalp care — rituals that never go out of style.">Technique isn't learned from a video. It lives in the hands of those who've practiced for decades. We carry traditions that predate trends — hot towel shaves, edge work, scalp care — rituals that never go out of style.</p>
             </div>
             <div class="philosophy-panel" id="panel-2">
-              <p class="philosophy-num">03 — Confidence</p>
-              <h3>Walk Out<br>Different</h3>
-              <p>You know the feeling. When everything is aligned — the fade is clean, the line is sharp, the beard is sculpted. It's not vanity. It's armor. We've been providing that armor for over a century.</p>
+              <p class="philosophy-num" data-es="03 — Confianza" data-en="03 — Confidence">03 — Confidence</p>
+              <h3 data-es="Sal<br>Diferente" data-en="Walk Out<br>Different">Walk Out<br>Different</h3>
+              <p data-es="Conoces esa sensación. Cuando todo está alineado — el degradado es limpio, la línea es nítida, la barba esculpida. No es vanidad. Es armadura. Llevamos más de un siglo proveyendo esa armadura." data-en="You know the feeling. When everything is aligned — the fade is clean, the line is sharp, the beard is sculpted. It's not vanity. It's armor. We've been providing that armor for over a century.">You know the feeling. When everything is aligned — the fade is clean, the line is sharp, the beard is sculpted. It's not vanity. It's armor. We've been providing that armor for over a century.</p>
             </div>
           </div>
           <!-- Panel indicators -->
@@ -963,12 +1011,12 @@
   <section id="services">
     <div class="services-header">
       <div>
-        <p class="section-label reveal-ready">What We Do</p>
+        <p class="section-label reveal-ready" data-es="Lo Que Hacemos" data-en="What We Do">What We Do</p>
         <div class="gold-line reveal-ready"></div>
-        <h2 class="section-heading reveal-ready">Precision.<br>Every Time.</h2>
+        <h2 class="section-heading reveal-ready" data-es="Precisión.<br>Siempre." data-en="Precision.<br>Every Time.">Precision.<br>Every Time.</h2>
       </div>
       <div>
-        <p class="section-body reveal-ready">
+        <p class="section-body reveal-ready" data-es="No es un menú. Es un compromiso. Cada servicio es realizado por un barbero que lo ha dominado — sin aprendices en cortes premium, sin atajos en los acabados." data-en="Not a menu. A commitment. Each service is performed by a barber who has mastered it — no apprentices on premium cuts, no shortcuts on finishing work.">
           Not a menu. A commitment. Each service is performed by a barber who has mastered it — no apprentices on premium cuts, no shortcuts on finishing work.
         </p>
       </div>
@@ -977,44 +1025,44 @@
       <div class="service-card reveal-ready">
         <div class="service-num">01</div>
         <div class="service-icon"><i class="fa-solid fa-scissors"></i></div>
-        <div class="service-name">Signature Cut</div>
-        <p class="service-desc">The definitive La Avenida experience. Full consultation, precision cut, structured styling, and a hot towel finish. This is not a haircut. This is an appointment with craft.</p>
-        <div class="service-price">From RD$800</div>
+        <div class="service-name" data-es="Corte Signature" data-en="Signature Cut">Signature Cut</div>
+        <p class="service-desc" data-es="La experiencia definitiva de La Avenida. Consulta completa, corte de precisión, peinado estructurado y acabado con toalla caliente. Esto no es un corte de cabello. Es una cita con el oficio." data-en="The definitive La Avenida experience. Full consultation, precision cut, structured styling, and a hot towel finish. This is not a haircut. This is an appointment with craft.">The definitive La Avenida experience. Full consultation, precision cut, structured styling, and a hot towel finish. This is not a haircut. This is an appointment with craft.</p>
+        <div class="service-price" data-es="Desde RD$800" data-en="From RD$800">From RD$800</div>
       </div>
       <div class="service-card reveal-ready">
         <div class="service-num">02</div>
         <div class="service-icon"><i class="fa-solid fa-star"></i></div>
-        <div class="service-name">Classic Shave</div>
-        <p class="service-desc">Straight-razor shave with pre-shave oil, three-pass technique, and a cold finish. A ritual, not a service. Book an extra 20 minutes — you'll want to sit in the quiet a moment longer.</p>
-        <div class="service-price">From RD$650</div>
+        <div class="service-name" data-es="Afeitado Clásico" data-en="Classic Shave">Classic Shave</div>
+        <p class="service-desc" data-es="Afeitado con navaja recta, aceite pre-afeitado, técnica de tres pasadas y acabado frío. Un ritual, no un servicio. Reserve 20 minutos extra — querrá quedarse en el silencio un momento más." data-en="Straight-razor shave with pre-shave oil, three-pass technique, and a cold finish. A ritual, not a service. Book an extra 20 minutes — you'll want to sit in the quiet a moment longer.">Straight-razor shave with pre-shave oil, three-pass technique, and a cold finish. A ritual, not a service. Book an extra 20 minutes — you'll want to sit in the quiet a moment longer.</p>
+        <div class="service-price" data-es="Desde RD$650" data-en="From RD$650">From RD$650</div>
       </div>
       <div class="service-card reveal-ready">
         <div class="service-num">03</div>
         <div class="service-icon"><i class="fa-solid fa-spa"></i></div>
-        <div class="service-name">Beard Architecture</div>
-        <p class="service-desc">Structure, symmetry, and sharp definition. Whether you're growing, shaping, or maintaining — our barbers work with your face, not against it. Oil treatment included.</p>
-        <div class="service-price">From RD$500</div>
+        <div class="service-name" data-es="Arquitectura de Barba" data-en="Beard Architecture">Beard Architecture</div>
+        <p class="service-desc" data-es="Estructura, simetría y definición precisa. Ya sea que estés creciendo, moldeando o manteniendo — nuestros barberos trabajan con tu rostro, no en contra de él. Tratamiento con aceite incluido." data-en="Structure, symmetry, and sharp definition. Whether you're growing, shaping, or maintaining — our barbers work with your face, not against it. Oil treatment included.">Structure, symmetry, and sharp definition. Whether you're growing, shaping, or maintaining — our barbers work with your face, not against it. Oil treatment included.</p>
+        <div class="service-price" data-es="Desde RD$500" data-en="From RD$500">From RD$500</div>
       </div>
       <div class="service-card reveal-ready">
         <div class="service-num">04</div>
         <div class="service-icon"><i class="fa-solid fa-crown"></i></div>
-        <div class="service-name">The Full Ritual</div>
-        <p class="service-desc">Signature cut + classic shave + beard sculpt + scalp treatment. For the man who knows that maintenance is not a luxury — it's a discipline. 90 minutes of uninterrupted craft.</p>
-        <div class="service-price">From RD$1,800</div>
+        <div class="service-name" data-es="El Ritual Completo" data-en="The Full Ritual">The Full Ritual</div>
+        <p class="service-desc" data-es="Corte Signature + afeitado clásico + escultura de barba + tratamiento de cuero cabelludo. Para el hombre que sabe que el mantenimiento no es un lujo — es una disciplina. 90 minutos de oficio ininterrumpido." data-en="Signature cut + classic shave + beard sculpt + scalp treatment. For the man who knows that maintenance is not a luxury — it's a discipline. 90 minutes of uninterrupted craft.">Signature cut + classic shave + beard sculpt + scalp treatment. For the man who knows that maintenance is not a luxury — it's a discipline. 90 minutes of uninterrupted craft.</p>
+        <div class="service-price" data-es="Desde RD$1,800" data-en="From RD$1,800">From RD$1,800</div>
       </div>
       <div class="service-card reveal-ready">
         <div class="service-num">05</div>
         <div class="service-icon"><i class="fa-solid fa-droplet"></i></div>
-        <div class="service-name">Scalp Treatment</div>
-        <p class="service-desc">Deep-cleanse scalp massage with essential oils and hot steam compress. Combat dryness, promote growth, restore balance. The foundation of great hair starts underneath it.</p>
-        <div class="service-price">From RD$600</div>
+        <div class="service-name" data-es="Tratamiento Capilar" data-en="Scalp Treatment">Scalp Treatment</div>
+        <p class="service-desc" data-es="Masaje de cuero cabelludo con aceites esenciales y compresa de vapor caliente. Combate la sequedad, promueve el crecimiento, restaura el equilibrio. La base de un gran cabello empieza debajo de él." data-en="Deep-cleanse scalp massage with essential oils and hot steam compress. Combat dryness, promote growth, restore balance. The foundation of great hair starts underneath it.">Deep-cleanse scalp massage with essential oils and hot steam compress. Combat dryness, promote growth, restore balance. The foundation of great hair starts underneath it.</p>
+        <div class="service-price" data-es="Desde RD$600" data-en="From RD$600">From RD$600</div>
       </div>
       <div class="service-card reveal-ready">
         <div class="service-num">06</div>
         <div class="service-icon"><i class="fa-solid fa-user-tie"></i></div>
-        <div class="service-name">Event Grooming</div>
-        <p class="service-desc">Weddings, shoots, board presentations, galas. Your appearance is your first word before you speak. We make sure it says exactly what you mean. Private booking available.</p>
-        <div class="service-price">From RD$3,500</div>
+        <div class="service-name" data-es="Aseo para Eventos" data-en="Event Grooming">Event Grooming</div>
+        <p class="service-desc" data-es="Bodas, sesiones fotográficas, presentaciones, galas. Tu apariencia es tu primera palabra antes de hablar. Nos aseguramos de que diga exactamente lo que quieres. Reserva privada disponible." data-en="Weddings, shoots, board presentations, galas. Your appearance is your first word before you speak. We make sure it says exactly what you mean. Private booking available.">Weddings, shoots, board presentations, galas. Your appearance is your first word before you speak. We make sure it says exactly what you mean. Private booking available.</p>
+        <div class="service-price" data-es="Desde RD$3,500" data-en="From RD$3,500">From RD$3,500</div>
       </div>
     </div>
   </section>
@@ -1022,45 +1070,45 @@
   <!-- GALLERY -->
   <section id="gallery">
     <div class="gallery-header">
-      <p class="section-label reveal-ready">The Work</p>
+      <p class="section-label reveal-ready" data-es="El Trabajo" data-en="The Work">The Work</p>
       <div class="gold-line reveal-ready"></div>
-      <h2 class="section-heading reveal-ready">The Craft<br>Speaks.</h2>
+      <h2 class="section-heading reveal-ready" data-es="El Oficio<br>Habla." data-en="The Craft<br>Speaks.">The Craft<br>Speaks.</h2>
     </div>
     <div class="gallery-grid">
       <div class="gallery-item">
         <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800&q=85&auto=format&fit=crop" alt="Barbershop interior" loading="lazy" />
-        <div class="gallery-item-overlay"><span class="gallery-item-label">The Chair</span></div>
+        <div class="gallery-item-overlay"><span class="gallery-item-label" data-es="La Silla" data-en="The Chair">The Chair</span></div>
       </div>
       <div class="gallery-item">
         <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=85&auto=format&fit=crop" alt="Hair cut in progress" loading="lazy" />
-        <div class="gallery-item-overlay"><span class="gallery-item-label">Precision Work</span></div>
+        <div class="gallery-item-overlay"><span class="gallery-item-label" data-es="Trabajo de Precisión" data-en="Precision Work">Precision Work</span></div>
       </div>
       <div class="gallery-item">
         <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&q=85&auto=format&fit=crop" alt="Master barber at work" loading="lazy" />
-        <div class="gallery-item-overlay"><span class="gallery-item-label">The Craft</span></div>
+        <div class="gallery-item-overlay"><span class="gallery-item-label" data-es="El Oficio" data-en="The Craft">The Craft</span></div>
       </div>
       <div class="gallery-item">
         <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=85&auto=format&fit=crop" alt="Classic shave" loading="lazy" />
-        <div class="gallery-item-overlay"><span class="gallery-item-label">The Shave</span></div>
+        <div class="gallery-item-overlay"><span class="gallery-item-label" data-es="El Afeitado" data-en="The Shave">The Shave</span></div>
       </div>
       <div class="gallery-item">
         <img src="https://images.unsplash.com/photo-1621609764095-b32bbe35cf3a?w=600&q=85&auto=format&fit=crop" alt="Barbershop tools" loading="lazy" />
-        <div class="gallery-item-overlay"><span class="gallery-item-label">The Tools</span></div>
+        <div class="gallery-item-overlay"><span class="gallery-item-label" data-es="Las Herramientas" data-en="The Tools">The Tools</span></div>
       </div>
     </div>
   </section>
 
   <!-- BOOKING CTA -->
   <section id="booking">
-    <p class="section-label">Reserve Your Chair</p>
+    <p class="section-label" data-es="Reserva Tu Silla" data-en="Reserve Your Chair">Reserve Your Chair</p>
     <div class="gold-line" style="background: rgba(10,10,10,0.2); margin: 0 auto 40px;"></div>
-    <h2 class="section-heading reveal-ready">Your Seat<br>Is Waiting.</h2>
-    <p class="section-body reveal-ready">
+    <h2 class="section-heading reveal-ready" data-es="Tu Lugar<br>Te Espera." data-en="Your Seat<br>Is Waiting.">Your Seat<br>Is Waiting.</h2>
+    <p class="section-body reveal-ready" data-es="Sin cita bienvenido. Reservas respetadas. Elige tu barbero y horario preferido, o simplemente llega — nosotros nos encargamos del resto." data-en="Walk-ins welcome. Reservations respected. Book your preferred barber and time, or simply show up — we take care of the rest.">
       Walk-ins welcome. Reservations respected. Book your preferred barber and time, or simply show up — we take care of the rest.
     </p>
     <div class="booking-actions reveal-ready">
       <a href="tel:+18098802016" class="btn-dark">
-        <i class="fa-solid fa-phone" style="margin-right: 10px;"></i>Call to Book
+        <i class="fa-solid fa-phone" style="margin-right: 10px;"></i><span data-es="Llamar para Reservar" data-en="Call to Book">Call to Book</span>
       </a>
       <a href="https://wa.me/18098802016" class="btn-outline-dark">
         <i class="fa-brands fa-whatsapp" style="margin-right: 10px;"></i>WhatsApp
@@ -1068,15 +1116,15 @@
     </div>
     <div class="booking-hours reveal-ready">
       <div class="hour-item">
-        <div class="hour-day">Mon — Fri</div>
+        <div class="hour-day" data-es="Lun — Vie" data-en="Mon — Fri">Mon — Fri</div>
         <div class="hour-time">8am — 8pm</div>
       </div>
       <div class="hour-item">
-        <div class="hour-day">Saturday</div>
+        <div class="hour-day" data-es="Sábado" data-en="Saturday">Saturday</div>
         <div class="hour-time">8am — 6pm</div>
       </div>
       <div class="hour-item">
-        <div class="hour-day">Sunday</div>
+        <div class="hour-day" data-es="Domingo" data-en="Sunday">Sunday</div>
         <div class="hour-time">10am — 4pm</div>
       </div>
     </div>
@@ -1087,7 +1135,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <h2>La <span>Avenida</span></h2>
-        <p>Shaping confidence since 1909. Three generations of master barbers. One standard of craft. Located in the heart of Santo Domingo.</p>
+        <p data-es="Moldeando confianza desde 1909. Tres generaciones de maestros barberos. Un solo estándar de oficio. Ubicados en el corazón de Santo Domingo." data-en="Shaping confidence since 1909. Three generations of master barbers. One standard of craft. Located in the heart of Santo Domingo.">Shaping confidence since 1909. Three generations of master barbers. One standard of craft. Located in the heart of Santo Domingo.</p>
         <div class="footer-social">
           <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
           <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
@@ -1096,18 +1144,18 @@
         </div>
       </div>
       <div class="footer-col">
-        <h4>Services</h4>
+        <h4 data-es="Servicios" data-en="Services">Services</h4>
         <ul>
-          <li><a href="#services">Signature Cut</a></li>
-          <li><a href="#services">Classic Shave</a></li>
-          <li><a href="#services">Beard Architecture</a></li>
-          <li><a href="#services">The Full Ritual</a></li>
-          <li><a href="#services">Scalp Treatment</a></li>
-          <li><a href="#services">Event Grooming</a></li>
+          <li><a href="#services" data-es="Corte Signature" data-en="Signature Cut">Signature Cut</a></li>
+          <li><a href="#services" data-es="Afeitado Clásico" data-en="Classic Shave">Classic Shave</a></li>
+          <li><a href="#services" data-es="Arquitectura de Barba" data-en="Beard Architecture">Beard Architecture</a></li>
+          <li><a href="#services" data-es="El Ritual Completo" data-en="The Full Ritual">The Full Ritual</a></li>
+          <li><a href="#services" data-es="Tratamiento Capilar" data-en="Scalp Treatment">Scalp Treatment</a></li>
+          <li><a href="#services" data-es="Aseo para Eventos" data-en="Event Grooming">Event Grooming</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Find Us</h4>
+        <h4 data-es="Encuéntranos" data-en="Find Us">Find Us</h4>
         <ul>
           <li>La Avenida, No. 112</li>
           <li>Santo Domingo</li>
@@ -1118,7 +1166,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2024 La Avenida Barbershop. Est. 1909. All rights reserved.</p>
+      <p data-es="&copy; 2024 La Avenida Barbershop. Est. 1909. Todos los derechos reservados." data-en="&copy; 2024 La Avenida Barbershop. Est. 1909. All rights reserved.">&copy; 2024 La Avenida Barbershop. Est. 1909. All rights reserved.</p>
       <p>Built by <a href="https://arcova.dev">Arcova</a></p>
     </div>
   </footer>
@@ -1424,6 +1472,56 @@
       }
     });
   });
+
+  // ===========================
+  // LANGUAGE TOGGLE
+  // ===========================
+  const LANG_KEY = 'la-avenida-language';
+
+  function applyLanguage(lang, animate) {
+    const elements = document.querySelectorAll('[data-es][data-en]');
+
+    const doUpdate = () => {
+      elements.forEach(el => {
+        const text = lang === 'es' ? el.getAttribute('data-es') : el.getAttribute('data-en');
+        if (text !== null) {
+          // Handle innerHTML vs innerText
+          if (/<br>/.test(text) || /&/.test(text)) {
+            el.innerHTML = text;
+          } else {
+            el.textContent = text;
+          }
+        }
+      });
+
+      // Update button states
+      document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+      // Update html lang attr
+      document.documentElement.lang = lang;
+    };
+
+    if (animate && elements.length > 0) {
+      // Quick fade transition
+      elements.forEach(el => el.classList.add('lang-fade'));
+      setTimeout(() => {
+        doUpdate();
+        elements.forEach(el => el.classList.remove('lang-fade'));
+      }, 180);
+    } else {
+      doUpdate();
+    }
+  }
+
+  function setLanguage(lang) {
+    localStorage.setItem(LANG_KEY, lang);
+    applyLanguage(lang, true);
+  }
+
+  // Init: load saved preference or default to Spanish
+  const savedLang = localStorage.getItem(LANG_KEY) || 'es';
+  applyLanguage(savedLang, false);
   </script>
 </body>
 </html>
