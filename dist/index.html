@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Avenida Barbershop — Est. 1909</title>
+  <meta name="description" content="Premium barbershop in the Dominican tradition. Shaping confidence since 1909." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Bebas Neue', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            primary: '#0a0a0a',
+            cream: '#f5f0e8',
+            gold: '#b8952a',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- GSAP + ScrollTrigger + Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <style>
+    /* ============ RESET & BASE ============ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #f5f0e8;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ============ CUSTOM CURSOR ============ */
+    #cursor {
+      width: 12px;
+      height: 12px;
+      background: #f5f0e8;
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: difference;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+    #cursor-follower {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(245,240,232,0.4);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      mix-blend-mode: difference;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
+    a:hover ~ #cursor,
+    button:hover ~ #cursor { transform: translate(-50%, -50%) scale(3); }
+
+    /* ============ PRELOADER ============ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #0a0a0a;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    #preloader-bar {
+      width: 0%;
+      height: 1px;
+      background: #b8952a;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      transition: none;
+    }
+    #preloader-year {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(12px, 2vw, 16px);
+      letter-spacing: 0.4em;
+      color: #b8952a;
+      margin-bottom: 24px;
+      opacity: 0;
+    }
+    #preloader-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 10vw, 120px);
+      letter-spacing: 0.08em;
+      color: #f5f0e8;
+      line-height: 1;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    #preloader-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(10px, 1.5vw, 13px);
+      letter-spacing: 0.6em;
+      color: #b8952a;
+      margin-top: 12px;
+      opacity: 0;
+      text-transform: uppercase;
+    }
+
+    /* ============ HERO ============ */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+    #hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.7) 60%, rgba(10,10,10,1) 100%),
+        url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1920&q=85&auto=format&fit=crop') center/cover no-repeat;
+      transform-origin: center center;
+      will-change: transform;
+    }
+    #hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .hero-est {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(11px, 1.5vw, 14px);
+      letter-spacing: 0.5em;
+      color: #b8952a;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0;
+    }
+    .hero-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 14vw, 180px);
+      line-height: 0.88;
+      letter-spacing: 0.03em;
+      color: #f5f0e8;
+      opacity: 0;
+    }
+    .hero-name span { color: #b8952a; }
+    .hero-tagline {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.7);
+      text-transform: uppercase;
+      margin-top: 32px;
+      opacity: 0;
+    }
+    .hero-cta {
+      margin-top: 56px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 16px 40px;
+      background: #b8952a;
+      color: #0a0a0a;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s, color 0.3s;
+      cursor: none;
+    }
+    .btn-primary:hover { background: #f5f0e8; }
+    .btn-ghost {
+      display: inline-block;
+      padding: 16px 40px;
+      border: 1px solid rgba(245,240,232,0.3);
+      color: #f5f0e8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.3s, background 0.3s;
+      cursor: none;
+    }
+    .btn-ghost:hover { border-color: #b8952a; background: rgba(184,149,42,0.08); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      z-index: 2;
+    }
+    .hero-scroll span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      color: rgba(245,240,232,0.4);
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, rgba(184,149,42,0.8), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ============ SECTION BASE ============ */
+    section { position: relative; }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.5em;
+      color: #b8952a;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .section-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 8vw, 110px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: #f5f0e8;
+    }
+    .section-body {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(16px, 1.5vw, 18px);
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(245,240,232,0.65);
+    }
+    .gold-line {
+      width: 60px;
+      height: 2px;
+      background: #b8952a;
+      margin-bottom: 32px;
+    }
+
+    /* ============ HERITAGE SECTION ============ */
+    #heritage {
+      padding: 140px 0;
+      background: #0a0a0a;
+    }
+    .heritage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .heritage-image-wrap {
+      position: relative;
+      height: 600px;
+      overflow: hidden;
+    }
+    .heritage-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.8s ease;
+      display: block;
+    }
+    .heritage-image-wrap:hover img { filter: grayscale(0%); }
+    .heritage-badge {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      width: 120px;
+      height: 120px;
+      background: #b8952a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .heritage-badge .year {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      color: #0a0a0a;
+      line-height: 1;
+    }
+    .heritage-badge .est {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: #0a0a0a;
+      text-transform: uppercase;
+    }
+    .heritage-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 48px;
+    }
+    .stat-item .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 56px;
+      color: #b8952a;
+      line-height: 1;
+    }
+    .stat-item .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: rgba(245,240,232,0.5);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ============ MISSION / QUOTE SECTION ============ */
+    #mission {
+      padding: 160px 48px;
+      background: #f5f0e8;
+      text-align: center;
+    }
+    .mission-quote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 7vw, 96px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: #0a0a0a;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .mission-quote .gold-word { color: #b8952a; }
+    .mission-attr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.4em;
+      color: rgba(10,10,10,0.4);
+      text-transform: uppercase;
+      margin-top: 40px;
+    }
+
+    /* ============ STICKY SCROLL TAKEOVER ============ */
+    #philosophy {
+      position: relative;
+    }
+    #philosophy-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .philosophy-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right, rgba(10,10,10,0.95) 40%, rgba(10,10,10,0.6) 100%),
+        url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1920&q=85&auto=format&fit=crop') center/cover no-repeat;
+    }
+    .philosophy-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      width: 100%;
+      padding: 0 48px;
+    }
+    .philosophy-panels { position: relative; }
+    .philosophy-panel {
+      opacity: 0;
+      transform: translateY(30px);
+      position: absolute;
+      top: 0; left: 0;
+      width: 50%;
+    }
+    .philosophy-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .philosophy-panel h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 6vw, 80px);
+      color: #f5f0e8;
+      line-height: 0.9;
+      margin-bottom: 24px;
+    }
+    .philosophy-panel p {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(245,240,232,0.65);
+      max-width: 440px;
+    }
+    .philosophy-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: #b8952a;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    #philosophy-scroll-space { height: 300vh; }
+
+    /* ============ SERVICES SECTION ============ */
+    #services {
+      padding: 140px 48px;
+      background: #0a0a0a;
+    }
+    .services-header {
+      max-width: 1280px;
+      margin: 0 auto 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+    }
+    .services-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .service-card {
+      background: #111;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.4s, background 0.4s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: #b8952a;
+      transition: width 0.5s ease;
+    }
+    .service-card:hover::before { width: 100%; }
+    .service-card:hover { background: #151515; }
+    .service-icon {
+      font-size: 20px;
+      color: #b8952a;
+      margin-bottom: 32px;
+    }
+    .service-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: rgba(245,240,232,0.25);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .service-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 0.05em;
+      color: #f5f0e8;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .service-desc {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(245,240,232,0.5);
+      margin-bottom: 32px;
+    }
+    .service-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: #b8952a;
+    }
+
+    /* ============ GALLERY SECTION ============ */
+    #gallery {
+      padding: 0;
+      background: #0a0a0a;
+    }
+    .gallery-header {
+      padding: 140px 48px 80px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 400px 400px;
+      gap: 2px;
+    }
+    .gallery-item {
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-item:first-child {
+      grid-row: 1 / 3;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.8s ease, transform 0.8s ease;
+      display: block;
+    }
+    .gallery-item:hover img {
+      filter: grayscale(0%);
+      transform: scale(1.05);
+    }
+    .gallery-item-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.5s;
+      display: flex;
+      align-items: flex-end;
+      padding: 24px;
+    }
+    .gallery-item:hover .gallery-item-overlay { opacity: 1; }
+    .gallery-item-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: #f5f0e8;
+      text-transform: uppercase;
+    }
+
+    /* ============ BOOKING CTA ============ */
+    #booking {
+      padding: 160px 48px;
+      background: #b8952a;
+      text-align: center;
+    }
+    #booking .section-label { color: rgba(10,10,10,0.5); }
+    #booking .section-heading { color: #0a0a0a; }
+    #booking .section-body { color: rgba(10,10,10,0.65); max-width: 560px; margin: 24px auto 0; }
+    .booking-actions {
+      margin-top: 56px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-dark {
+      display: inline-block;
+      padding: 18px 48px;
+      background: #0a0a0a;
+      color: #f5f0e8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.3s;
+      cursor: none;
+    }
+    .btn-dark:hover { background: #1a1a1a; }
+    .btn-outline-dark {
+      display: inline-block;
+      padding: 18px 48px;
+      border: 2px solid rgba(10,10,10,0.3);
+      color: #0a0a0a;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.3s, background 0.3s;
+      cursor: none;
+    }
+    .btn-outline-dark:hover { border-color: #0a0a0a; background: rgba(10,10,10,0.08); }
+    .booking-hours {
+      margin-top: 64px;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .hour-item {
+      text-align: center;
+    }
+    .hour-day {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: rgba(10,10,10,0.5);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .hour-time {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: #0a0a0a;
+      letter-spacing: 0.05em;
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+      padding: 80px 48px 48px;
+      background: #050505;
+      border-top: 1px solid rgba(245,240,232,0.06);
+    }
+    .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 80px;
+      padding-bottom: 64px;
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+    .footer-brand h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      letter-spacing: 0.05em;
+      color: #f5f0e8;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .footer-brand h2 span { color: #b8952a; }
+    .footer-brand p {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(245,240,232,0.4);
+      max-width: 320px;
+      margin-bottom: 32px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(245,240,232,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(245,240,232,0.5);
+      text-decoration: none;
+      font-size: 14px;
+      transition: border-color 0.3s, color 0.3s;
+      cursor: none;
+    }
+    .social-link:hover { border-color: #b8952a; color: #b8952a; }
+    .footer-col h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: #b8952a;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(245,240,232,0.4);
+      margin-bottom: 12px;
+    }
+    .footer-col ul li a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.3s;
+      cursor: none;
+    }
+    .footer-col ul li a:hover { color: #f5f0e8; }
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-bottom p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: rgba(245,240,232,0.2);
+    }
+    .footer-bottom a {
+      color: #b8952a;
+      text-decoration: none;
+    }
+
+    /* ============ NAV ============ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 28px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, padding 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(20px);
+      padding: 20px 48px;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.1em;
+      color: #f5f0e8;
+      text-decoration: none;
+      cursor: none;
+    }
+    .nav-logo span { color: #b8952a; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: rgba(245,240,232,0.6);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      cursor: none;
+    }
+    .nav-links a:hover { color: #f5f0e8; }
+    .nav-book {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      background: #b8952a;
+      color: #0a0a0a;
+      text-decoration: none;
+      transition: background 0.3s;
+      cursor: none;
+    }
+    .nav-book:hover { background: #f5f0e8; }
+
+    /* ============ MOBILE ============ */
+    @media (max-width: 1024px) {
+      .heritage-grid { grid-template-columns: 1fr; gap: 60px; }
+      .heritage-image-wrap { height: 400px; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .services-header { grid-template-columns: 1fr; gap: 40px; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-item:first-child { grid-row: auto; }
+      .footer-grid { grid-template-columns: 1fr; gap: 48px; }
+      nav { padding: 20px 24px; }
+      nav.scrolled { padding: 16px 24px; }
+      .nav-links { display: none; }
+      #hero { padding: 0 24px; }
+      #heritage, #services, #gallery .gallery-header, #booking { padding-left: 24px; padding-right: 24px; }
+      footer { padding-left: 24px; padding-right: 24px; }
+      #mission { padding: 100px 24px; }
+    }
+    @media (max-width: 640px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .gallery-item { height: 280px; }
+      .booking-hours { gap: 32px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      #philosophy .philosophy-panel { width: 100%; }
+    }
+
+    /* ============ REVEAL ANIMATION STATE ============ */
+    .reveal-hidden { opacity: 0; transform: translateY(40px); }
+    .reveal-ready { opacity: 0; transform: translateY(40px); }
+    
+    /* Prevent layout shift during JS load */
+    body.loading * { pointer-events: none; }
+  </style>
+</head>
+<body class="loading">
+
+  <!-- Custom Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-follower"></div>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div id="preloader-year">Est.</div>
+    <div id="preloader-logo">La Avenida</div>
+    <div id="preloader-sub">Barbershop · 1909</div>
+    <div id="preloader-bar"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">La <span>Avenida</span></a>
+    <ul class="nav-links">
+      <li><a href="#heritage">Heritage</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+    </ul>
+    <a href="#booking" class="nav-book">Book Now</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div id="hero-bg"></div>
+    <div id="hero-content">
+      <p class="hero-est">Est. — 1909 — Santo Domingo</p>
+      <h1 class="hero-name">La<br><span>Avenida</span></h1>
+      <p class="hero-tagline">We've been shaping confidence since 1909</p>
+      <div class="hero-cta">
+        <a href="#booking" class="btn-primary">Reserve Your Chair</a>
+        <a href="#heritage" class="btn-ghost">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section id="heritage">
+    <div class="heritage-grid">
+      <div class="heritage-image-col">
+        <div class="heritage-image-wrap reveal-ready">
+          <img
+            src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800&q=85&auto=format&fit=crop"
+            alt="Heritage barbershop interior"
+            loading="lazy"
+          />
+          <div class="heritage-badge">
+            <span class="year">1909</span>
+            <span class="est">Est.</span>
+          </div>
+        </div>
+      </div>
+      <div class="heritage-text">
+        <p class="section-label reveal-ready">Our Heritage</p>
+        <div class="gold-line reveal-ready"></div>
+        <h2 class="section-heading reveal-ready">More Than<br>A Cut.<br>A Legacy.</h2>
+        <p class="section-body reveal-ready" style="margin-top: 32px;">
+          In 1909, on a quiet stretch of La Avenida in Santo Domingo, a barber opened his doors
+          with a single belief: a great cut changes how a man carries himself. Over a century later,
+          that belief is still the foundation of every service we offer.
+        </p>
+        <p class="section-body reveal-ready" style="margin-top: 20px;">
+          Three generations. One standard. The craft is handed down, not outsourced.
+          Every barber who works here trained under someone who trained under someone who
+          knew our founder by name.
+        </p>
+        <div class="heritage-stats reveal-ready">
+          <div class="stat-item">
+            <div class="stat-num">115</div>
+            <div class="stat-label">Years of Service</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">3</div>
+            <div class="stat-label">Generations</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">40+</div>
+            <div class="stat-label">Master Barbers</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">1</div>
+            <div class="stat-label">Standard</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION / QUOTE -->
+  <section id="mission">
+    <p class="section-label" style="color: rgba(10,10,10,0.4);">The Philosophy</p>
+    <blockquote class="mission-quote reveal-ready">
+      "The chair is where a man sits down as himself — and stands up as who he wants to be."
+    </blockquote>
+    <p class="mission-attr reveal-ready">— La Avenida Barbershop, Est. 1909</p>
+  </section>
+
+  <!-- PHILOSOPHY STICKY SCROLL -->
+  <section id="philosophy">
+    <div id="philosophy-scroll-space">
+      <div id="philosophy-sticky">
+        <div class="philosophy-bg"></div>
+        <div class="philosophy-content">
+          <div class="philosophy-panels" id="philosophy-panels">
+            <div class="philosophy-panel active" id="panel-0">
+              <p class="philosophy-num">01 — Craft</p>
+              <h3>The Art of<br>the Blade</h3>
+              <p>Every cut begins with silence. An assessment. A commitment. We don't rush the process — the process is the point. Master barbers who understand structure, proportion, and the difference between a good cut and a defining one.</p>
+            </div>
+            <div class="philosophy-panel" id="panel-1">
+              <p class="philosophy-num">02 — Tradition</p>
+              <h3>Passed Down,<br>Not Copied</h3>
+              <p>Technique isn't learned from a video. It lives in the hands of those who've practiced for decades. We carry traditions that predate trends — hot towel shaves, edge work, scalp care — rituals that never go out of style.</p>
+            </div>
+            <div class="philosophy-panel" id="panel-2">
+              <p class="philosophy-num">03 — Confidence</p>
+              <h3>Walk Out<br>Different</h3>
+              <p>You know the feeling. When everything is aligned — the fade is clean, the line is sharp, the beard is sculpted. It's not vanity. It's armor. We've been providing that armor for over a century.</p>
+            </div>
+          </div>
+          <!-- Panel indicators -->
+          <div style="margin-top: 60px; display: flex; gap: 12px;">
+            <div class="panel-dot" id="dot-0" style="width: 32px; height: 2px; background: #b8952a;"></div>
+            <div class="panel-dot" id="dot-1" style="width: 8px; height: 2px; background: rgba(245,240,232,0.2);"></div>
+            <div class="panel-dot" id="dot-2" style="width: 8px; height: 2px; background: rgba(245,240,232,0.2);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="services-header">
+      <div>
+        <p class="section-label reveal-ready">What We Do</p>
+        <div class="gold-line reveal-ready"></div>
+        <h2 class="section-heading reveal-ready">Precision.<br>Every Time.</h2>
+      </div>
+      <div>
+        <p class="section-body reveal-ready">
+          Not a menu. A commitment. Each service is performed by a barber who has mastered it — no apprentices on premium cuts, no shortcuts on finishing work.
+        </p>
+      </div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal-ready">
+        <div class="service-num">01</div>
+        <div class="service-icon"><i class="fa-solid fa-scissors"></i></div>
+        <div class="service-name">Signature Cut</div>
+        <p class="service-desc">The definitive La Avenida experience. Full consultation, precision cut, structured styling, and a hot towel finish. This is not a haircut. This is an appointment with craft.</p>
+        <div class="service-price">From RD$800</div>
+      </div>
+      <div class="service-card reveal-ready">
+        <div class="service-num">02</div>
+        <div class="service-icon"><i class="fa-solid fa-star"></i></div>
+        <div class="service-name">Classic Shave</div>
+        <p class="service-desc">Straight-razor shave with pre-shave oil, three-pass technique, and a cold finish. A ritual, not a service. Book an extra 20 minutes — you'll want to sit in the quiet a moment longer.</p>
+        <div class="service-price">From RD$650</div>
+      </div>
+      <div class="service-card reveal-ready">
+        <div class="service-num">03</div>
+        <div class="service-icon"><i class="fa-solid fa-spa"></i></div>
+        <div class="service-name">Beard Architecture</div>
+        <p class="service-desc">Structure, symmetry, and sharp definition. Whether you're growing, shaping, or maintaining — our barbers work with your face, not against it. Oil treatment included.</p>
+        <div class="service-price">From RD$500</div>
+      </div>
+      <div class="service-card reveal-ready">
+        <div class="service-num">04</div>
+        <div class="service-icon"><i class="fa-solid fa-crown"></i></div>
+        <div class="service-name">The Full Ritual</div>
+        <p class="service-desc">Signature cut + classic shave + beard sculpt + scalp treatment. For the man who knows that maintenance is not a luxury — it's a discipline. 90 minutes of uninterrupted craft.</p>
+        <div class="service-price">From RD$1,800</div>
+      </div>
+      <div class="service-card reveal-ready">
+        <div class="service-num">05</div>
+        <div class="service-icon"><i class="fa-solid fa-droplet"></i></div>
+        <div class="service-name">Scalp Treatment</div>
+        <p class="service-desc">Deep-cleanse scalp massage with essential oils and hot steam compress. Combat dryness, promote growth, restore balance. The foundation of great hair starts underneath it.</p>
+        <div class="service-price">From RD$600</div>
+      </div>
+      <div class="service-card reveal-ready">
+        <div class="service-num">06</div>
+        <div class="service-icon"><i class="fa-solid fa-user-tie"></i></div>
+        <div class="service-name">Event Grooming</div>
+        <p class="service-desc">Weddings, shoots, board presentations, galas. Your appearance is your first word before you speak. We make sure it says exactly what you mean. Private booking available.</p>
+        <div class="service-price">From RD$3,500</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="gallery-header">
+      <p class="section-label reveal-ready">The Work</p>
+      <div class="gold-line reveal-ready"></div>
+      <h2 class="section-heading reveal-ready">The Craft<br>Speaks.</h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800&q=85&auto=format&fit=crop" alt="Barbershop interior" loading="lazy" />
+        <div class="gallery-item-overlay"><span class="gallery-item-label">The Chair</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=85&auto=format&fit=crop" alt="Hair cut in progress" loading="lazy" />
+        <div class="gallery-item-overlay"><span class="gallery-item-label">Precision Work</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&q=85&auto=format&fit=crop" alt="Master barber at work" loading="lazy" />
+        <div class="gallery-item-overlay"><span class="gallery-item-label">The Craft</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=85&auto=format&fit=crop" alt="Classic shave" loading="lazy" />
+        <div class="gallery-item-overlay"><span class="gallery-item-label">The Shave</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1621609764095-b32bbe35cf3a?w=600&q=85&auto=format&fit=crop" alt="Barbershop tools" loading="lazy" />
+        <div class="gallery-item-overlay"><span class="gallery-item-label">The Tools</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING CTA -->
+  <section id="booking">
+    <p class="section-label">Reserve Your Chair</p>
+    <div class="gold-line" style="background: rgba(10,10,10,0.2); margin: 0 auto 40px;"></div>
+    <h2 class="section-heading reveal-ready">Your Seat<br>Is Waiting.</h2>
+    <p class="section-body reveal-ready">
+      Walk-ins welcome. Reservations respected. Book your preferred barber and time, or simply show up — we take care of the rest.
+    </p>
+    <div class="booking-actions reveal-ready">
+      <a href="tel:+18098802016" class="btn-dark">
+        <i class="fa-solid fa-phone" style="margin-right: 10px;"></i>Call to Book
+      </a>
+      <a href="https://wa.me/18098802016" class="btn-outline-dark">
+        <i class="fa-brands fa-whatsapp" style="margin-right: 10px;"></i>WhatsApp
+      </a>
+    </div>
+    <div class="booking-hours reveal-ready">
+      <div class="hour-item">
+        <div class="hour-day">Mon — Fri</div>
+        <div class="hour-time">8am — 8pm</div>
+      </div>
+      <div class="hour-item">
+        <div class="hour-day">Saturday</div>
+        <div class="hour-time">8am — 6pm</div>
+      </div>
+      <div class="hour-item">
+        <div class="hour-day">Sunday</div>
+        <div class="hour-time">10am — 4pm</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h2>La <span>Avenida</span></h2>
+        <p>Shaping confidence since 1909. Three generations of master barbers. One standard of craft. Located in the heart of Santo Domingo.</p>
+        <div class="footer-social">
+          <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-link"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" class="social-link"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Signature Cut</a></li>
+          <li><a href="#services">Classic Shave</a></li>
+          <li><a href="#services">Beard Architecture</a></li>
+          <li><a href="#services">The Full Ritual</a></li>
+          <li><a href="#services">Scalp Treatment</a></li>
+          <li><a href="#services">Event Grooming</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Find Us</h4>
+        <ul>
+          <li>La Avenida, No. 112</li>
+          <li>Santo Domingo</li>
+          <li>República Dominicana</li>
+          <li style="margin-top: 16px;"><a href="tel:+18098802016">+1 (809) 880-2016</a></li>
+          <li><a href="mailto:info@laavenidabarbershop.com">info@laavenidabarbershop.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 La Avenida Barbershop. Est. 1909. All rights reserved.</p>
+      <p>Built by <a href="https://arcova.dev">Arcova</a></p>
+    </div>
+  </footer>
+
+  <script>
+  // ===========================
+  // CURSOR
+  // ===========================
+  const cursor = document.getElementById('cursor');
+  const follower = document.getElementById('cursor-follower');
+  let mouseX = 0, mouseY = 0;
+  let followerX = 0, followerY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
+
+  function animateFollower() {
+    followerX += (mouseX - followerX) * 0.1;
+    followerY += (mouseY - followerY) * 0.1;
+    follower.style.left = followerX + 'px';
+    follower.style.top = followerY + 'px';
+    requestAnimationFrame(animateFollower);
+  }
+  animateFollower();
+
+  // Scale cursor on interactive elements
+  document.querySelectorAll('a, button, .service-card, .gallery-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(3)';
+      follower.style.width = '60px';
+      follower.style.height = '60px';
+      follower.style.borderColor = 'rgba(184,149,42,0.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+      follower.style.width = '40px';
+      follower.style.height = '40px';
+      follower.style.borderColor = 'rgba(245,240,232,0.4)';
+    });
+  });
+
+  // ===========================
+  // PRELOADER
+  // ===========================
+  const preloader = document.getElementById('preloader');
+  const bar = document.getElementById('preloader-bar');
+  const preYear = document.getElementById('preloader-year');
+  const preLogo = document.getElementById('preloader-logo');
+  const preSub = document.getElementById('preloader-sub');
+
+  let progress = 0;
+  const tl = gsap.timeline();
+
+  // Animate preloader bar
+  gsap.to(bar, { width: '100%', duration: 1.8, ease: 'power2.inOut' });
+  gsap.to(preYear, { opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: 'power2.out' });
+  gsap.to(preLogo, { opacity: 1, y: 0, duration: 0.8, delay: 0.5, ease: 'power3.out' });
+  gsap.to(preSub, { opacity: 1, y: 0, duration: 0.6, delay: 0.9, ease: 'power2.out' });
+
+  // Exit preloader
+  setTimeout(() => {
+    gsap.to(preloader, {
+      yPercent: -100,
+      duration: 1.2,
+      ease: 'power3.inOut',
+      onComplete: () => {
+        preloader.style.display = 'none';
+        document.body.classList.remove('loading');
+        revealHero();
+        initScrollTriggers();
+      }
+    });
+  }, 2400);
+
+  // ===========================
+  // HERO REVEAL
+  // ===========================
+  function revealHero() {
+    gsap.to('.hero-est', { opacity: 1, y: 0, duration: 0.8, delay: 0.1, ease: 'power2.out' });
+    gsap.to('.hero-name', { opacity: 1, y: 0, duration: 1, delay: 0.3, ease: 'power3.out' });
+    gsap.to('.hero-tagline', { opacity: 1, y: 0, duration: 0.8, delay: 0.6, ease: 'power2.out' });
+    gsap.to('.hero-cta', { opacity: 1, y: 0, duration: 0.8, delay: 0.9, ease: 'power2.out' });
+    gsap.to('.hero-scroll', { opacity: 1, duration: 0.8, delay: 1.4, ease: 'power2.out' });
+  }
+
+  // ===========================
+  // LENIS SMOOTH SCROLL
+  // ===========================
+  const lenis = new Lenis({
+    duration: 1.4,
+    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+  });
+
+  lenis.on('scroll', ScrollTrigger.update);
+
+  gsap.ticker.add(time => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  // ===========================
+  // NAVIGATION
+  // ===========================
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // ===========================
+  // SCROLL TRIGGERS
+  // ===========================
+  function initScrollTriggers() {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // HERO PARALLAX
+    gsap.to('#hero-bg', {
+      yPercent: 30,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+      }
+    });
+
+    // REVEAL ELEMENTS — batch them
+    gsap.utils.toArray('.reveal-ready').forEach(el => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          }
+        }
+      );
+    });
+
+    // HERITAGE IMAGE SPECIAL
+    gsap.fromTo('.heritage-image-wrap',
+      { clipPath: 'inset(0 100% 0 0)' },
+      {
+        clipPath: 'inset(0 0% 0 0)',
+        duration: 1.2,
+        ease: 'power3.inOut',
+        scrollTrigger: {
+          trigger: '.heritage-image-wrap',
+          start: 'top 80%',
+        }
+      }
+    );
+
+    // HERITAGE STATS STAGGER
+    gsap.fromTo('.stat-item',
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1, y: 0,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.heritage-stats',
+          start: 'top 85%',
+        }
+      }
+    );
+
+    // MISSION QUOTE REVEAL
+    gsap.fromTo('.mission-quote',
+      { opacity: 0, y: 60 },
+      {
+        opacity: 1, y: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#mission',
+          start: 'top 75%',
+        }
+      }
+    );
+
+    // SERVICES STAGGER
+    gsap.fromTo('.service-card',
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1, y: 0,
+        stagger: 0.12,
+        duration: 0.9,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.services-grid',
+          start: 'top 80%',
+        }
+      }
+    );
+
+    // GALLERY STAGGER
+    gsap.fromTo('.gallery-item',
+      { opacity: 0, scale: 0.96 },
+      {
+        opacity: 1, scale: 1,
+        stagger: 0.1,
+        duration: 0.9,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.gallery-grid',
+          start: 'top 85%',
+        }
+      }
+    );
+
+    // BOOKING CTA
+    gsap.fromTo('#booking .section-heading',
+      { opacity: 0, y: 60 },
+      {
+        opacity: 1, y: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#booking',
+          start: 'top 75%',
+        }
+      }
+    );
+
+    // STICKY SCROLL PHILOSOPHY SECTION
+    const panels = ['panel-0', 'panel-1', 'panel-2'];
+    const dots = ['dot-0', 'dot-1', 'dot-2'];
+
+    // We set up panel transitions based on scroll position within the spacer
+    ScrollTrigger.create({
+      trigger: '#philosophy-scroll-space',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1,
+      onUpdate: self => {
+        const progress = self.progress;
+        let panelIdx = 0;
+        if (progress >= 0.67) panelIdx = 2;
+        else if (progress >= 0.33) panelIdx = 1;
+
+        panels.forEach((id, i) => {
+          const el = document.getElementById(id);
+          const isActive = i === panelIdx;
+          if (isActive && !el.classList.contains('active')) {
+            // Fade out old panel
+            panels.forEach((pid, pi) => {
+              if (pi !== i) {
+                gsap.to(document.getElementById(pid), { opacity: 0, y: 30, duration: 0.4 });
+                document.getElementById(pid).classList.remove('active');
+              }
+            });
+            // Fade in new
+            el.classList.add('active');
+            gsap.fromTo(el, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+          }
+          // Update dots
+          const dot = document.getElementById(dots[i]);
+          if (dot) {
+            dot.style.width = isActive ? '32px' : '8px';
+            dot.style.background = isActive ? '#b8952a' : 'rgba(245,240,232,0.2)';
+          }
+        });
+      }
+    });
+
+    // FOOTER REVEAL
+    gsap.fromTo('.footer-brand',
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1, y: 0,
+        duration: 1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: 'footer',
+          start: 'top 85%',
+        }
+      }
+    );
+  }
+
+  // ===========================
+  // NAV SMOOTH LINKS
+  // ===========================
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        lenis && lenis.scrollTo(target, { offset: -80, duration: 1.6 });
+      }
+    });
+  });
+  </script>
+</body>
+</html>
